@@ -15,6 +15,7 @@ let auth: Oauth2 = {
 
 auth.clientID = String(process.env.npm_config_clientid);
 auth.clientSecret = String(process.env.npm_config_clientsecret);
+let port = process.env.npm_config_port;
 let users: User[] = [];
 let organizations: Organization[] = [];
 let customers: Customer[] = [];
@@ -94,7 +95,7 @@ const apiUrlCloudID =
 
   //recup les organisations de la database et le met en cache
   const responseOrganizationDB: AxiosResponse = await axios.get(
-    `http://localhost:8080/api/v1/jira/organization/`,
+    `http://${port}:8080/api/v1/jira/organization/`,
   );
   for (let l = 0; l < responseOrganizationDB.data.length; l++) {
     let organizationdb: Organization = {
@@ -116,7 +117,7 @@ const apiUrlCloudID =
     });
     if (foundOrg == undefined) {
       //si l'organisations n'est pas déjà dans la db alors la rajoute
-      axios.post('http://localhost:8080/api/v1/jira/organization/', {
+      axios.post('http://${port}:8080/api/v1/jira/organization/', {
         organizationID: responseOrganization.data.values[i].id,
         name: responseOrganization.data.values[i].name,
       });
@@ -126,7 +127,7 @@ const apiUrlCloudID =
 
   //recup les custumers de la database et le met en cache
   const responseCustomerDB: AxiosResponse = await axios.get(
-    `http://localhost:8080/api/v1/jira/customer/`,
+    `http://${port}:8080/api/v1/jira/customer/`,
   );
   for (let k = 0; k < responseCustomerDB.data.length; k++) {
     let customerdb: Customer = {
@@ -139,7 +140,7 @@ const apiUrlCloudID =
   }
   //recup les view de la database et le met en cache
   const responseView: AxiosResponse = await axios.get(
-    `http://localhost:8080/api/v1/jira/viewco/`,
+    `http://${port}:8080/api/v1/jira/viewco/`,
   );
   for (let m = 0; m < responseView.data.length; m++) {
     let viewdb: ViewOrgCust = {
@@ -180,7 +181,7 @@ const apiUrlCloudID =
         });
         // si le customer n'est pas déjà encodé avec un organisation précédente
         if (foundjira == undefined) {
-          axios.post('http://localhost:8080/api/v1/jira/customer/', {
+          axios.post('http://${port}:8080/api/v1/jira/customer/', {
             accountId: responseOrganizationCustomer.data.values[j].accountId,
             accountType: 'customer',
             emailAddress:
@@ -203,8 +204,7 @@ const apiUrlCloudID =
       });
       if (foundView == undefined) {
         //si  n'est pas déjà dans la view db alors la rajoute
-        //10.1.100.244
-        axios.post('http://localhost:8080/api/v1/jira/viewco/', {
+        axios.post('http://${port}:8080/api/v1/jira/viewco/', {
           accountId: responseOrganizationCustomer.data.values[j].accountId,
           organizationID: organizationId,
         });
