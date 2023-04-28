@@ -20,7 +20,8 @@
     "eslint": "eslint \"./src/**\"",
     "eslint:fix": "npm run eslint -- --fix",
     "build": "tsc -p .",
-    "node": "node ./build/client/httprequest.js"
+    "node": "node ./build/server/webhook.js",
+    "nodehttp": "node ./build/client/httprequest.js"
   },
   "keywords": [
     "jira",
@@ -34,7 +35,8 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "^18.16.1",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",
