@@ -76,7 +76,7 @@ export class ViewIssue {
   status: string;
   summary: string;
   userId: string;
-  organizationId: string;
+  organizationid: string;
 
   constructor(item: Issue) {
     this.issue_id = item.issue_id;
@@ -88,7 +88,7 @@ export class ViewIssue {
     this.status = item.status;
     this.summary = item.summary;
     this.userId = item.userId;
-    this.organizationId = item.organizationId;
+    this.organizationid = item.organizationid;
   }
 }
 
@@ -165,7 +165,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'DB',
-    CMD: 'GET',
+    CMD: 'GET customers',
     RESPONCE: responseCustomerDB.data,
   });
 
@@ -197,7 +197,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'DB',
-    CMD: 'GET',
+    CMD: 'GET users',
     RESPONCE: responseUserDB.data,
   });
 
@@ -216,7 +216,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
       status: responseIssueDB.data[q].status,
       summary: responseIssueDB.data[q].summary,
       userId: responseIssueDB.data[q].userId,
-      organizationId: responseIssueDB.data[q].organizationId,
+      organizationid: responseIssueDB.data[q].organizationid,
     };
     issueDB.push(issuedb);
   }
@@ -225,7 +225,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'DB',
-    CMD: 'GET',
+    CMD: 'GET issues',
     RESPONCE: responseIssueDB.data,
   });
 
@@ -249,7 +249,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'DB',
-    CMD: 'GET',
+    CMD: 'GET worklog',
     RESPONCE: responseWorklogDB.data,
   });
 
@@ -263,7 +263,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'JIRA',
-    CMD: 'GET',
+    CMD: 'GET users',
     RESPONCE: responseUser.data,
   });
 
@@ -323,7 +323,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'JIRA',
-    CMD: 'GET',
+    CMD: 'GET organization',
     RESPONCE: responseOrganization.data,
   });
 
@@ -336,7 +336,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'DB',
-    CMD: 'GET',
+    CMD: 'GET organization',
     RESPONCE: responseOrganizationDB.data,
   });
 
@@ -385,7 +385,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'JIRA',
-    CMD: 'GET',
+    CMD: 'GET view',
     RESPONCE: responseView.data,
   });
 
@@ -422,7 +422,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
           TIMESTAMP: new Date().getTime(),
           SEVERITY: '',
           ORIGINE: 'AXIOS',
-          CMD: 'POST',
+          CMD: 'POST customer',
           RESPONCE: customer,
         });
         //si  n'est pas déjà dans la view db alors la rajoute
@@ -440,7 +440,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     TIMESTAMP: new Date().getTime(),
     SEVERITY: '',
     ORIGINE: 'JIRA',
-    CMD: 'GET',
+    CMD: 'GET issue',
     RESPONCE: responseIssue.data,
   });
 
@@ -457,7 +457,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
           .status,
       summary: responseIssue.data.issues[p].fields.summary,
       userId: responseIssue.data.issues[p].fields.creator.accountId,
-      organizationId:
+      organizationid:
         responseIssue.data.issues[p].fields.customfield_10002[0].id,
     };
     const foundIssuedb = issueDB.find(obj => {
@@ -470,7 +470,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
         TIMESTAMP: new Date().getTime(),
         SEVERITY: '',
         ORIGINE: 'AXIOS',
-        CMD: 'POST',
+        CMD: 'POST issue',
         RESPONCE: issue,
       });
       axios.post('http://10.1.100.244:8080/api/v1/jira/issue/', issue);
@@ -478,7 +478,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     issues.push(issue);
     // get worklog from jira
     const responseWorklog: AxiosResponse = await axios.get(
-      `${auth.baseUrl}/rest/api/2/issue/${issue.key}/worklog`, //{{baseUrl}}/rest/api/2/issue/{{issueIdOrKey}}/worklog
+      `${auth.baseUrl}/rest/api/2/issue/${issue.key}/worklog`,
       {
         auth: { username: auth.atlassianEmail, password: auth.atlassianToken },
       },
@@ -513,7 +513,7 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
           TIMESTAMP: new Date().getTime(),
           SEVERITY: '',
           ORIGINE: 'AXIOS',
-          CMD: 'POST',
+          CMD: 'POST worklog',
           RESPONCE: worklog,
         });
         axios.post(

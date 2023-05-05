@@ -8,5 +8,5 @@ export interface Issue {
   status: string;
   summary: string;
   userId: string;
-  organizationId: string;
+  organizationid: string;
 }

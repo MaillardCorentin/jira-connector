@@ -1,4 +1,4 @@
 export interface Organization {
-    organizationID: string;
-    name: string;
+  organizationID: string;
+  name: string;
 }

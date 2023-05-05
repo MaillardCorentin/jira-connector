@@ -108,7 +108,7 @@ app.post(webhookUrl, (req, res) => {
         status: req.body.issue.fields.customfield_10010.currentStatus.status,
         summary: req.body.issue.fields.summary,
         userId: req.body.issue.fields.creator.accountId,
-        organizationId: req.body.issue.fields.customfield_10002[0].id,
+        organizationid: req.body.issue.fields.customfield_10002[0].id,
       };
       loggerWebhook.info({
         TIMESTAMP: new Date().getTime(),
@@ -132,7 +132,7 @@ app.post(webhookUrl, (req, res) => {
         status: req.body.issue.fields.customfield_10010.currentStatus.status,
         summary: req.body.issue.fields.summary,
         userId: req.body.issue.fields.creator.accountId,
-        organizationId: req.body.issue.fields.customfield_10002[0].id,
+        organizationid: req.body.issue.fields.customfield_10002[0].id,
       };
       loggerWebhook.info({
         TIMESTAMP: new Date().getTime(),
@@ -156,7 +156,7 @@ app.post(webhookUrl, (req, res) => {
         status: req.body.issue.fields.customfield_10010.currentStatus.status,
         summary: req.body.issue.fields.summary,
         userId: req.body.issue.fields.creator.accountId,
-        organizationId: req.body.issue.fields.customfield_10002[0].id,
+        organizationid: req.body.issue.fields.customfield_10002[0].id,
       };
       loggerWebhook.info({
         TIMESTAMP: new Date().getTime(),
