@@ -160,6 +160,15 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
   const responseCustomerDB: AxiosResponse = await axios.get(
     `http://10.1.100.244:8080/api/v1/jira/customer/`,
   );
+
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'DB',
+    CMD: 'GET',
+    RESPONCE: responseCustomerDB.data,
+  });
+
   for (let k = 0; k < responseCustomerDB.data.length; k++) {
     let customerdb: Customer = {
       accountId: responseCustomerDB.data[k].accountId,
@@ -184,6 +193,14 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     customerDB.push(userdb);
   }
 
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'DB',
+    CMD: 'GET',
+    RESPONCE: responseUserDB.data,
+  });
+
   //recup les issues de la database et les mets en cache
   const responseIssueDB: AxiosResponse = await axios.get(
     `http://10.1.100.244:8080/api/v1/jira/issue/`,
@@ -204,6 +221,14 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     issueDB.push(issuedb);
   }
 
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'DB',
+    CMD: 'GET',
+    RESPONCE: responseIssueDB.data,
+  });
+
   //recup les worklog de la database et les mets en cache
   const responseWorklogDB: AxiosResponse = await axios.get(
     `http://10.1.100.244:8080/api/v1/jira/issue/worklog/`,
@@ -220,11 +245,27 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     worklogDB.push(worklogdb);
   }
 
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'DB',
+    CMD: 'GET',
+    RESPONCE: responseWorklogDB.data,
+  });
+
   //récup user et customer de jira
   const responseUser: AxiosResponse = await axios.get(
     `${auth.baseUrl}/rest/api/3/users/search?startAt=0&maxResults=50`,
     { auth: { username: auth.atlassianEmail, password: auth.atlassianToken } },
   );
+
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'JIRA',
+    CMD: 'GET',
+    RESPONCE: responseUser.data,
+  });
 
   for (let i = 0; i < responseUser.data.length; i++) {
     // si l'accountType est un user (atlassian) ou un client (customer)
@@ -278,10 +319,27 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     { auth: { username: auth.atlassianEmail, password: auth.atlassianToken } },
   );
 
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'JIRA',
+    CMD: 'GET',
+    RESPONCE: responseOrganization.data,
+  });
+
   //recup les organisations de la database et le met en cache
   const responseOrganizationDB: AxiosResponse = await axios.get(
     `http://10.1.100.244:8080/api/v1/jira/organization/`,
   );
+
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'DB',
+    CMD: 'GET',
+    RESPONCE: responseOrganizationDB.data,
+  });
+
   for (let l = 0; l < responseOrganizationDB.data.length; l++) {
     let organizationdb: Organization = {
       organizationID: responseOrganizationDB.data[l].organizationID,
@@ -323,6 +381,14 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     viewDB.push(viewdb);
   }
 
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'JIRA',
+    CMD: 'GET',
+    RESPONCE: responseView.data,
+  });
+
   //recup les customers de chaque organisations sur jira
   for (let i = 0; i < organizations.length; i++) {
     let organizationId = organizations[i].organizationID;
@@ -353,15 +419,16 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
       });
       if (foundView == undefined) {
         loggerHttp.info({
-          accountId: responseOrganizationCustomer.data.values[j].accountId,
-          organizationID: organizationId,
+          TIMESTAMP: new Date().getTime(),
+          SEVERITY: '',
+          ORIGINE: 'AXIOS',
+          CMD: 'POST',
+          RESPONCE: customer,
         });
         //si  n'est pas déjà dans la view db alors la rajoute
-        axios.post('http://10.1.100.244:8080/api/v1/jira/viewco/', {
-          accountId: responseOrganizationCustomer.data.values[j].accountId,
-          organizationID: organizationId,
-        });
+        axios.post('http://10.1.100.244:8080/api/v1/jira/viewco/', customer);
       }
+      customers.push(customer);
     }
   }
 
@@ -369,6 +436,13 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     `${auth.baseUrl}/rest/api/latest/search`,
     { auth: { username: auth.atlassianEmail, password: auth.atlassianToken } },
   ); //Issue
+  loggerHttp.info({
+    TIMESTAMP: new Date().getTime(),
+    SEVERITY: '',
+    ORIGINE: 'JIRA',
+    CMD: 'GET',
+    RESPONCE: responseIssue.data,
+  });
 
   for (let p = 0; p < responseIssue.data.issues.length; p++) {
     let issue: Issue = {
@@ -392,8 +466,13 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
     // si le customer/user n'est pas présent dans la db
     if (foundIssuedb == undefined) {
       //ajoute dans le fichier http qui se trouve dans les logs
-      loggerHttp.info(issue);
-
+      loggerHttp.info({
+        TIMESTAMP: new Date().getTime(),
+        SEVERITY: '',
+        ORIGINE: 'AXIOS',
+        CMD: 'POST',
+        RESPONCE: issue,
+      });
       axios.post('http://10.1.100.244:8080/api/v1/jira/issue/', issue);
     }
     issues.push(issue);
@@ -404,6 +483,13 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
         auth: { username: auth.atlassianEmail, password: auth.atlassianToken },
       },
     ); //worklog
+    loggerHttp.info({
+      TIMESTAMP: new Date().getTime(),
+      SEVERITY: '',
+      ORIGINE: 'JIRA',
+      CMD: 'GET',
+      RESPONCE: responseWorklog.data,
+    });
 
     for (let r = 0; r < responseWorklog.data.worklogs.length; r++) {
       let worklog: Worklog = {
@@ -423,7 +509,13 @@ let worklogDB: ViewWorklog[] = arrWorklogs.map(item => new ViewWorklog(item));
       // si le customer/user n'est pas présent dans la db
       if (foundWorklogdb == undefined) {
         //ajoute dans le fichier http qui se trouve dans les logs
-        loggerHttp.info(worklog);
+        loggerHttp.info({
+          TIMESTAMP: new Date().getTime(),
+          SEVERITY: '',
+          ORIGINE: 'AXIOS',
+          CMD: 'POST',
+          RESPONCE: worklog,
+        });
         axios.post(
           'http://10.1.100.244:8080/api/v1/jira/issue/worklog',
           worklog,

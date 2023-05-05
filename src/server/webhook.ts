@@ -1,5 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import { Issue } from '../lib/jira/dataModels/issues';
+import { Worklog } from '../lib/jira/dataModels/worklog';
 import axios, { AxiosResponse } from 'axios';
 import { createLogger } from '../lib/logger';
 
@@ -29,55 +31,65 @@ app.post(webhookUrl, (req, res) => {
   // console.log("Requête reçue depuis le webhook : ", req.body);
   switch (req.body.webhookEvent) {
     case 'worklog_created': {
-      loggerWebhook.info({
+      let worklog: Worklog = {
         worklog_id: req.body.worklog.id,
         issue_id: req.body.worklog.issueId,
         creatorId: req.body.worklog.updateAuthor.accountId,
         timespent: req.body.worklog.timeSpentSeconds,
         updated: req.body.worklog.updated,
         description: req.body.worklog.comment,
+      };
+      loggerWebhook.info({
+        TIMESTAMP: new Date().getTime(),
+        SEVERITY: '',
+        ORIGINE: 'EXPRESS',
+        CMD: 'POST',
+        RESPONCE: worklog,
       });
       // console.log(req.body.worklog);
-      axios.post('http://10.1.100.244:8080/api/v1/jira/issue/worklog/', {
-        worklog_id: req.body.worklog.id,
-        issue_id: req.body.worklog.issueId,
-        creatorId: req.body.worklog.updateAuthor.accountId,
-        timespent: req.body.worklog.timeSpentSeconds,
-        updated: req.body.worklog.updated,
-        description: req.body.worklog.comment,
-      });
+      axios.post(
+        'http://10.1.100.244:8080/api/v1/jira/issue/worklog/',
+        worklog,
+      );
       break;
     }
     case 'worklog_updated': {
-      loggerWebhook.info('Worklog updated :', {
+      let worklog: Worklog = {
         worklog_id: req.body.worklog.id,
         issue_id: req.body.worklog.issueId,
         creatorId: req.body.worklog.updateAuthor.accountId,
         timespent: req.body.worklog.timeSpentSeconds,
         updated: req.body.worklog.updated,
         description: req.body.worklog.comment,
+      };
+      loggerWebhook.info({
+        TIMESTAMP: new Date().getTime(),
+        SEVERITY: '',
+        ORIGINE: 'EXPRESS',
+        CMD: 'PUT',
+        RESPONCE: worklog,
       });
       axios.put(
         `http://localhost:8080/api/v1/jira/issue/worklog/${req.body.worklog.id}`,
-        {
-          worklog_id: req.body.worklog.id,
-          issue_id: req.body.worklog.issueId,
-          creatorId: req.body.worklog.updateAuthor.accountId,
-          timespent: req.body.worklog.timeSpentSeconds,
-          updated: req.body.worklog.updated,
-          description: req.body.worklog.comment,
-        },
+        worklog,
       );
       break;
     }
     case 'worklog_deleted': {
-      loggerWebhook.info('Worklog deleted :', {
+      let worklog: Worklog = {
         worklog_id: req.body.worklog.id,
         issue_id: req.body.worklog.issueId,
         creatorId: req.body.worklog.updateAuthor.accountId,
         timespent: req.body.worklog.timeSpentSeconds,
         updated: req.body.worklog.updated,
         description: req.body.worklog.comment,
+      };
+      loggerWebhook.info({
+        TIMESTAMP: new Date().getTime(),
+        SEVERITY: '',
+        ORIGINE: 'EXPRESS',
+        CMD: 'DELETE',
+        RESPONCE: worklog,
       });
       axios.delete(
         `http://localhost:8080/api/v1/jira/issue/worklog/${req.body.worklog.id}`,
@@ -85,18 +97,78 @@ app.post(webhookUrl, (req, res) => {
       );
       break;
     }
-    // case 'jira:issue_created': {
-    //   loggerWebhook.info('Issue created : ' + req.body.issue.id);
-    //   break;
-    // }
-    // case 'jira:issue_updated': {
-    //   loggerWebhook.info('Issue updated : ' + req.body.issue.id);
-    //   break;
-    // }
-    // case 'jira:issue_deleted': {
-    //   loggerWebhook.info('Issue deleted : ' + req.body.issue.id);
-    //   break;
-    // }
+    case 'jira:issue_created': {
+      let issue: Issue = {
+        issue_id: req.body.issue.id,
+        key: req.body.issue.key,
+        nameIssueType: req.body.issue.fields.issuetype.name,
+        timespent: req.body.issue.fields.timespent,
+        updated: req.body.issue.fields.updated,
+        description: req.body.issue.fields.description,
+        status: req.body.issue.fields.customfield_10010.currentStatus.status,
+        summary: req.body.issue.fields.summary,
+        userId: req.body.issue.fields.creator.accountId,
+        organizationId: req.body.issue.fields.customfield_10002[0].id,
+      };
+      loggerWebhook.info({
+        TIMESTAMP: new Date().getTime(),
+        SEVERITY: '',
+        ORIGINE: 'EXPRESS',
+        CMD: 'POST',
+        RESPONCE: issue,
+      });
+      // console.log(req.body.worklog);
+      axios.post('http://10.1.100.244:8080/api/v1/jira/issue/', issue);
+      break;
+    }
+    case 'jira:issue_updated': {
+      let issue: Issue = {
+        issue_id: req.body.issue.id,
+        key: req.body.issue.key,
+        nameIssueType: req.body.issue.fields.issuetype.name,
+        timespent: req.body.issue.fields.timespent,
+        updated: req.body.issue.fields.updated,
+        description: req.body.issue.fields.description,
+        status: req.body.issue.fields.customfield_10010.currentStatus.status,
+        summary: req.body.issue.fields.summary,
+        userId: req.body.issue.fields.creator.accountId,
+        organizationId: req.body.issue.fields.customfield_10002[0].id,
+      };
+      loggerWebhook.info({
+        TIMESTAMP: new Date().getTime(),
+        SEVERITY: '',
+        ORIGINE: 'EXPRESS',
+        CMD: 'PUT',
+        RESPONCE: issue,
+      });
+      // console.log(req.body.worklog);
+      axios.put('http://10.1.100.244:8080/api/v1/jira/issue/', issue);
+      break;
+    }
+    case 'jira:issue_deleted': {
+      let issue: Issue = {
+        issue_id: req.body.issue.id,
+        key: req.body.issue.key,
+        nameIssueType: req.body.issue.fields.issuetype.name,
+        timespent: req.body.issue.fields.timespent,
+        updated: req.body.issue.fields.updated,
+        description: req.body.issue.fields.description,
+        status: req.body.issue.fields.customfield_10010.currentStatus.status,
+        summary: req.body.issue.fields.summary,
+        userId: req.body.issue.fields.creator.accountId,
+        organizationId: req.body.issue.fields.customfield_10002[0].id,
+      };
+      loggerWebhook.info({
+        TIMESTAMP: new Date().getTime(),
+        SEVERITY: '',
+        ORIGINE: 'EXPRESS',
+        CMD: 'DELETE',
+        RESPONCE: issue,
+      });
+      // console.log(req.body.worklog);
+      axios.delete('http://10.1.100.244:8080/api/v1/jira/issue/');
+      break;
+    }
     // case 'comment_created': {
     //   loggerWebhook.info(
     //     'Comment created : ' + req.body.comment.body,
